@@ -1,21 +1,20 @@
 import React from 'react';
-import {deleteProviderFromHealthTeam, getCurrentUserDetail, updateUserDetail} from "./actions/user_detail.action";
 import {connect} from "react-redux";
 import {checkLogin} from "./actions/auth.action";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import {TextField} from "@material-ui/core";
-import UserDetailProviderCard from "./UserDetailProviderCard";
+import {InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
 import Header from "./Header";
 import Footer from "./Footer";
-import PlanCard from "./PlanCard";
+import {getCurrentProviderDetail, updateCurrentProviderDetail} from "./actions/provider_detail.action";
+import {getSpecialty} from "./actions/specialty.action";
 
-class Account extends React.Component {
+class ProviderAccount extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            editUserDetail: {
+            editProviderDetail: {
                 id: 0,
                 firstName: "",
                 lastName: "",
@@ -26,8 +25,8 @@ class Account extends React.Component {
                 city: "",
                 state: "",
                 zip: "",
-                insurance: {},
-                myHealthTeam: []
+                specialty: {},
+                verified: false
             }
         }
     }
@@ -36,46 +35,68 @@ class Account extends React.Component {
         if (!this.props.loggedIn) {
             this.props.checkLogin()
                 .then(() => {
+                    let valid = false;
                     if (this.props.loggedIn) {
-                        this.props.getCurrentUserDetail(this.props.loggedIn.id)
+                        this.props.loggedIn.profiles.forEach(p => {
+                            if (p.type === 'provider') {
+                                valid = true;
+                            }
+                        })
+                    } else {
+                        this.props.history.push("/provider-login");
+                    }
+                    if (!valid) {
+                        this.props.history.push("/provider-login");
+                    }
+
+                    if (this.props.loggedIn) {
+                        this.props.getCurrentProviderDetail(this.props.loggedIn.id)
                             .then(() => {
                                 this.setState({
-                                    editUserDetail: this.props.userDetail
+                                    editProviderDetail: this.props.providerDetail
                                 })
                             });
                     } else {
-                        this.props.history.push("/login");
+                        this.props.history.push("/provider-login");
                     }
                 });
         }
 
+        if (!this.props.specialties) {
+            this.props.getSpecialty();
+        }
     }
 
     handleConfirmClick(event) {
-        this.props.updateUserDetail(this.state.editUserDetail);
+        this.props.updateCurrentProviderDetail(this.state.editProviderDetail);
         this.setState({
-            editUserDetail: this.props.userDetail
+            editProviderDetail: this.props.providerDetail
         })
-    }
-
-    handleCancelClick(event) {
-        this.state.editUserDetail["insurance"] = null;
-        this.setState({
-            editUserDetail: this.state.editUserDetail
-        });
     }
 
     handleFieldChange(event) {
         const {name, value} = event.target;
-        this.state.editUserDetail[name] = value;
+        this.state.editProviderDetail[name] = value;
         this.setState({
-            editUserDetail: this.state.editUserDetail
+            editProviderDetail: this.state.editProviderDetail
+        })
+    }
+
+    handleSelectChange(event) {
+        const {value} = event.target;
+        const specialty = {
+            id: +value
+        };
+        console.log(specialty);
+        this.state.editProviderDetail["specialty"] = specialty;
+        this.setState({
+            editProviderDetail: this.state.editProviderDetail
         })
     }
 
     render() {
-        let name = this.props.userDetail && this.props.userDetail.firstName + " " + this.props.userDetail.lastName;
-        let profile = this.props.userDetail && <div className="container">
+        let name = this.props.providerDetail && this.props.providerDetail.firstName + " " + this.props.providerDetail.lastName;
+        let profile = this.props.providerDetail && <div className="container">
             <h2 align="center">{name}'s Account</h2>
             <Grid container spacing={5} alignItems="center" justify="center">
                 <Grid item md={6}>
@@ -87,7 +108,7 @@ class Account extends React.Component {
                         label="First Name"
                         name="firstName"
                         color="warning"
-                        value={this.state.editUserDetail.firstName}
+                        value={this.state.editProviderDetail.firstName}
                         onChange={this.handleFieldChange.bind(this)}
                     />}
                 </Grid>
@@ -100,7 +121,7 @@ class Account extends React.Component {
                         label="Last Name"
                         name="lastName"
                         color="warning"
-                        value={this.state.editUserDetail.lastName}
+                        value={this.state.editProviderDetail.lastName}
                         onChange={this.handleFieldChange.bind(this)}
                     />}
                 </Grid>
@@ -113,7 +134,7 @@ class Account extends React.Component {
                         label="Phone"
                         name="phone"
                         color="warning"
-                        value={this.state.editUserDetail.phone}
+                        value={this.state.editProviderDetail.phone}
                         onChange={this.handleFieldChange.bind(this)}
                     />}
                 </Grid>
@@ -126,7 +147,7 @@ class Account extends React.Component {
                         label="Email"
                         name="email"
                         color="warning"
-                        value={this.state.editUserDetail.email}
+                        value={this.state.editProviderDetail.email}
                         onChange={this.handleFieldChange.bind(this)}
                     />}
                 </Grid>
@@ -139,7 +160,7 @@ class Account extends React.Component {
                         label="Address1"
                         name="address1"
                         color="warning"
-                        value={this.state.editUserDetail.address1}
+                        value={this.state.editProviderDetail.address1}
                         onChange={this.handleFieldChange.bind(this)}
                     />}
                 </Grid>
@@ -152,7 +173,7 @@ class Account extends React.Component {
                         label="Address2"
                         name="address2"
                         color="warning"
-                        value={this.state.editUserDetail.address2}
+                        value={this.state.editProviderDetail.address2}
                         onChange={this.handleFieldChange.bind(this)}
                     />}
                 </Grid>
@@ -165,7 +186,7 @@ class Account extends React.Component {
                         label="City"
                         name="city"
                         color="warning"
-                        value={this.state.editUserDetail.city}
+                        value={this.state.editProviderDetail.city}
                         onChange={this.handleFieldChange.bind(this)}
                     />}
                 </Grid>
@@ -178,7 +199,7 @@ class Account extends React.Component {
                         label="State"
                         name="state"
                         color="warning"
-                        value={this.state.editUserDetail.state}
+                        value={this.state.editProviderDetail.state}
                         onChange={this.handleFieldChange.bind(this)}
                     />}
                 </Grid>
@@ -191,52 +212,43 @@ class Account extends React.Component {
                         label="Zip"
                         name="zip"
                         color="warning"
-                        value={this.state.editUserDetail.zip}
+                        value={this.state.editProviderDetail.zip}
                         onChange={this.handleFieldChange.bind(this)}
                     />}
                 </Grid>
-                <Grid item md={12}>
-                    <h4 align="center">My Plan:</h4>
+                <Grid container justify="center" alignItems="center">
+                    <InputLabel id="demo-simple-select-label">Specialty</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={this.state.editProviderDetail.specialty ? this.state.editProviderDetail.specialty.type : ""}
+                        onChange={this.handleSelectChange.bind(this)}
+                    >
+                        {this.props.specialties && this.props.specialties.map(s => {
+                            return <MenuItem value={s.id} >{s.type}</MenuItem>
+                        })}
+                    </Select>
                 </Grid>
-                <Grid item md={12}>
-                    {this.props.userDetail.insurance ? <PlanCard plan={this.props.userDetail.insurance} show={false}></PlanCard> : ""}
+                <Grid container justify="center" alignItems="center">
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        onClick={this.handleConfirmClick.bind(this)}
+                    >
+                        Confirm
+                    </Button>
                 </Grid>
-                <Grid container md={6} alignItems="center" justify="center">
-                    {this.props.userDetail.insurance ? <a className="btn btn-warning" href="/plans">CHANGE</a> : ""}
+                <Grid container justify="center" alignItems="center" />
+                <Grid container justify="center" alignItems="center">
+                    <a className="btn btn-outline-primary" href="/logout">Logout</a>
                 </Grid>
-                <Grid container md={6} alignItems="center" justify="center">
-                    {this.props.userDetail.insurance ? <button className="btn btn-danger"
-                                                               onClick={this.handleCancelClick.bind(this)}
-                    >CANCEL
-                    </button> : ""}
-                </Grid>
-                <Grid item md={12}>
-                    <h4 align="center">My Health Team:</h4>
-                </Grid>
-                {
-                    this.state.editUserDetail.myHealthTeam.map(p => {
-                        return <Grid item md={5}>
-                            <UserDetailProviderCard provider={p} history={this.props.history}/>
-                        </Grid>;
-                    })
-                }
-
-                <Button
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    onClick={this.handleConfirmClick.bind(this)}
-                >
-                    Confirm
-                </Button>
             </Grid>
         </div>;
 
         return (
             <React.Fragment>
-                <Header />
                 {profile}
-                <Footer />
             </React.Fragment>
         )
     }
@@ -244,14 +256,15 @@ class Account extends React.Component {
 
 function mapStateToProps(appState) {
     return {
-        userDetail: appState.userDetail,
-        loggedIn: appState.loggedIn
+        providerDetail: appState.providerDetail,
+        loggedIn: appState.loggedIn,
+        specialties: appState.specialties
     };
 }
 
 export default connect(mapStateToProps, {
-    getCurrentUserDetail,
+    getCurrentProviderDetail,
     checkLogin,
-    updateUserDetail,
-    deleteProviderFromHealthTeam
-})(Account);
+    updateCurrentProviderDetail,
+    getSpecialty
+})(ProviderAccount);

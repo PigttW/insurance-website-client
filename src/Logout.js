@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {logout} from "./actions/auth.action";
+import Footer from "./Footer";
+import Header from "./Header";
+import Grid from "@material-ui/core/Grid";
 
 class Logout extends Component {
 
@@ -15,8 +18,11 @@ class Logout extends Component {
     render() {
         return (
             <div>
-                <h2>Logout</h2>
-                <button className="btn btn-danger" onClick={this.handleLogout}>Click to Logout</button>
+                <Header />
+                <Grid container spacing={5} justify="center" alignItems="center">
+                    <button className="btn btn-danger" onClick={this.handleLogout}>Click to Logout</button>
+                </Grid>
+                <Footer />
             </div>
         );
     }

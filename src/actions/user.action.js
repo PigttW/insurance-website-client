@@ -13,3 +13,15 @@ export function signup(newUser, callback) {
         payload: promise
     };
 }
+
+export function providerSignup(newUser, callback) {
+    const promise = axios.post('http://localhost:8080/users/provider', newUser)
+        .then(res => {
+            callback(res);
+            return res;
+        });
+    return {
+        type: SIGNUP,
+        payload: promise
+    };
+}

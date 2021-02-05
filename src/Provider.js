@@ -1,7 +1,7 @@
 import React from 'react';
 import {filterProvidersByName, filterProvidersByType, getProviders} from "./actions/providers.action";
 import {connect} from "react-redux";
-import {BottomNavigation, BottomNavigationAction, makeStyles, TextField} from "@material-ui/core";
+import {BottomNavigation, BottomNavigationAction, Container, makeStyles, TextField} from "@material-ui/core";
 import LocalHospitalIcon from '@material-ui/icons/LocalHospital';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import CancelIcon from '@material-ui/icons/Cancel';
@@ -10,15 +10,22 @@ import {getSpecialty} from "./actions/specialty.action";
 import providerCard from "./ProviderCard";
 import ProviderCard from "./ProviderCard";
 import Grid from "@material-ui/core/Grid";
+import Footer from "./Footer";
+import Header from "./Header";
+import {getComments} from "./actions/comment.action";
+import {getCurrentUserDetail} from "./actions/user_detail.action";
+import {checkLogin} from "./actions/auth.action";
 
-class Provider extends React.Component {;
+class Provider extends React.Component {
+    ;
 
     constructor(props) {
         super(props);
         this.state = {
             option: "reset",
             typeValue: "",
-            nameValue: ""
+            nameValue: "",
+            provider: []
         }
     }
 
@@ -29,6 +36,18 @@ class Provider extends React.Component {;
 
         if (this.props.specialties === null) {
             this.props.getSpecialty();
+        }
+
+        if (this.props.comments === null) {
+            this.props.getComments();
+        }
+
+        if (this.props.loggedIn === null) {
+            this.props.checkLogin();
+        }
+
+        if (this.props.userDetail === null) {
+            this.props.getCurrentUserDetail();
         }
     }
 
@@ -64,11 +83,6 @@ class Provider extends React.Component {;
 
     render() {
         const {value} = this.state;
-        const classes = makeStyles({
-            root: {
-                width: 500,
-            },
-        });
 
         let findByType = this.state.option === "type" && this.props.specialties && <Autocomplete
             id="combo-box-demo"
@@ -87,7 +101,8 @@ class Provider extends React.Component {;
 
         return (
             <React.Fragment>
-                <div className="container">
+                <Header/>
+                <Container>
                     <BottomNavigation
                         value={value}
                         onChange={this.handleChange}
@@ -98,18 +113,25 @@ class Provider extends React.Component {;
                     </BottomNavigation>
                     {findByType}
                     {findByName}
-                    <Grid container spacing={5}>
+                    <Grid container spacing={5} alignItems='center' justify='center'>
                         {
-                            this.props.providers && this.props.providers.map(provider => {
+                            this.props.providers && this.props.providers.filter(p => p.verified).map(provider => {
                                 return (
-                                    <Grid item md={10}>
-                                        <ProviderCard provider={provider}></ProviderCard>
+                                    <Grid item md={6}>
+                                        <ProviderCard provider={provider} comments={
+                                            this.props.comments
+                                            && this.props.comments.filter(c => c.providerDetail.id === provider.id)
+                                        } color={this.props.userDetail
+                                        && this.props.userDetail.myHealthTeam.findIndex(c => c.id === provider.id) >= 0 ?
+                                        "secondary" : "action"} history={this.props.history}
+                                        ></ProviderCard>
                                     </Grid>
                                 )
                             })
                         }
                     </Grid>
-                </div>
+                </Container>
+                <Footer/>
             </React.Fragment>
         );
     }
@@ -118,8 +140,19 @@ class Provider extends React.Component {;
 function mapStateToProps(appState) {
     return {
         providers: appState.providers,
-        specialties: appState.specialties
+        specialties: appState.specialties,
+        comments: appState.comments,
+        loggedIn: appState.loggedIn,
+        userDetail: appState.userDetail
     };
 }
 
-export default connect(mapStateToProps, {getProviders, getSpecialty, filterProvidersByType, filterProvidersByName})(Provider);
+export default connect(mapStateToProps, {
+    getProviders,
+    getSpecialty,
+    filterProvidersByType,
+    filterProvidersByName,
+    getComments,
+    checkLogin,
+    getCurrentUserDetail
+})(Provider);

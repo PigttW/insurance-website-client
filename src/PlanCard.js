@@ -82,12 +82,14 @@ class PlanCard extends React.Component {
                     </div>
                 </CardContent>
                 <Divider variant="middle"/>
-                <CardActions className={classes.action}>
+                {
+                    this.props.show && <CardActions className={classes.action}>
                     <Button variant="contained" color="primary" className={classes.button}
                             onClick={this.handleClick.bind(this)}>
                         CHOOSE
                     </Button>
-                </CardActions>
+                    </CardActions>
+                }
             </Card>
         )
     }

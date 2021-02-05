@@ -17,7 +17,7 @@ const styles = (theme) => ({
         height: '100vh',
     },
     image: {
-        backgroundImage: 'url(https://source.unsplash.com/-uHVRvDr7pg)',
+        backgroundImage: 'url(https://source.unsplash.com/npxXWgQ33ZQ)',
         backgroundColor:
             theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
         backgroundSize: 'cover',
@@ -42,12 +42,12 @@ const styles = (theme) => ({
     },
 });
 
-class Login extends Component {
+class AdminLogin extends Component {
 
     onSubmit = (user) => {
         this.props.login(user, (res) => {
             if (res.data.success) {
-                this.props.history.push('/account');
+                this.props.history.push('/admin');
             } else {
                 alert("Invalid account or password");
             }
@@ -92,7 +92,6 @@ class Login extends Component {
 
         return (
             <div>
-                <Header />
                 <Grid container component="main" className={classes.root}>
                     <CssBaseline />
                     <Grid item xs={false} sm={4} md={7} className={classes.image} />
@@ -102,7 +101,7 @@ class Login extends Component {
                                 <LockOutlinedIcon />
                             </Avatar>
                             <Typography component="h1" variant="h5">
-                                Sign in
+                                Admin Sign in
                             </Typography>
                             <form onSubmit={this.props.handleSubmit(this.onSubmit)} className={classes.form} noValidate>
                                 <Grid container alignItems="center" justify="center">
@@ -121,14 +120,6 @@ class Login extends Component {
                                         component={this.renderField}
                                     />
                                 </Grid>
-                                <Grid container alignItems="center" justify="center">
-                                    <Field
-                                        name="remember-me"
-                                        label="Remember Me"
-                                        type="checkbox"
-                                        component={this.renderCheckbox}
-                                    />
-                                </Grid>
                                 <Button
                                     type="submit"
                                     fullWidth
@@ -138,18 +129,10 @@ class Login extends Component {
                                 >
                                     Sign In
                                 </Button>
-                                <Grid container>
-                                    <Grid item>
-                                        <Link href="/signup" variant="body2">
-                                            {"Don't have an account? Sign Up"}
-                                        </Link>
-                                    </Grid>
-                                </Grid>
                             </form>
                         </div>
                     </Grid>
                 </Grid>
-                <Footer />
             </div>
         );
     }
@@ -168,6 +151,6 @@ function mapStateToProps(state) {
 export default withStyles(styles, { withTheme: true })(connect(mapStateToProps, {login})(
     reduxForm({
         form: 'LoginForm'
-    })(Login))
+    })(AdminLogin))
 );
 

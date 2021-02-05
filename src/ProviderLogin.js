@@ -9,15 +9,13 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import {CssBaseline, Paper, withStyles} from "@material-ui/core";
 import Link from "@material-ui/core/Link";
-import Header from "./Header";
-import Footer from "./Footer";
 
 const styles = (theme) => ({
     root: {
         height: '100vh',
     },
     image: {
-        backgroundImage: 'url(https://source.unsplash.com/-uHVRvDr7pg)',
+        backgroundImage: 'url(https://source.unsplash.com/FVh_yqLR9eA)',
         backgroundColor:
             theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
         backgroundSize: 'cover',
@@ -42,12 +40,12 @@ const styles = (theme) => ({
     },
 });
 
-class Login extends Component {
+class ProviderLogin extends Component {
 
     onSubmit = (user) => {
         this.props.login(user, (res) => {
             if (res.data.success) {
-                this.props.history.push('/account');
+                this.props.history.push('/provider-account');
             } else {
                 alert("Invalid account or password");
             }
@@ -70,29 +68,12 @@ class Login extends Component {
         )
     }
 
-    renderCheckbox({input, label, type}) {
-        return (
-            <div className="form-check">
-                <label>
-                    <input
-                        type="checkbox"
-                        name={input.name}
-                        {...input}
-                        className="form-check-input"
-                    />
-                    {label}
-                </label>
-            </div>
-        )
-    }
-
 
     render() {
         const { classes } = this.props;
 
         return (
             <div>
-                <Header />
                 <Grid container component="main" className={classes.root}>
                     <CssBaseline />
                     <Grid item xs={false} sm={4} md={7} className={classes.image} />
@@ -102,7 +83,7 @@ class Login extends Component {
                                 <LockOutlinedIcon />
                             </Avatar>
                             <Typography component="h1" variant="h5">
-                                Sign in
+                                Provider Sign in
                             </Typography>
                             <form onSubmit={this.props.handleSubmit(this.onSubmit)} className={classes.form} noValidate>
                                 <Grid container alignItems="center" justify="center">
@@ -121,14 +102,6 @@ class Login extends Component {
                                         component={this.renderField}
                                     />
                                 </Grid>
-                                <Grid container alignItems="center" justify="center">
-                                    <Field
-                                        name="remember-me"
-                                        label="Remember Me"
-                                        type="checkbox"
-                                        component={this.renderCheckbox}
-                                    />
-                                </Grid>
                                 <Button
                                     type="submit"
                                     fullWidth
@@ -140,8 +113,8 @@ class Login extends Component {
                                 </Button>
                                 <Grid container>
                                     <Grid item>
-                                        <Link href="/signup" variant="body2">
-                                            {"Don't have an account? Sign Up"}
+                                        <Link href="/provider-signup" variant="body2">
+                                            {"I am a new provider. Sign Up"}
                                         </Link>
                                     </Grid>
                                 </Grid>
@@ -149,7 +122,6 @@ class Login extends Component {
                         </div>
                     </Grid>
                 </Grid>
-                <Footer />
             </div>
         );
     }
@@ -168,6 +140,6 @@ function mapStateToProps(state) {
 export default withStyles(styles, { withTheme: true })(connect(mapStateToProps, {login})(
     reduxForm({
         form: 'LoginForm'
-    })(Login))
+    })(ProviderLogin))
 );
 

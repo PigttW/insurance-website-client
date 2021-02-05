@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import {Alert} from "@material-ui/lab"
 import {connect} from "react-redux";
-import {signup} from "./actions/user.action";
+import {providerSignup, signup} from "./actions/user.action";
 import Grid from "@material-ui/core/Grid";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -32,7 +32,7 @@ const styles = (theme) => ({
     },
 });
 
-class Signup extends React.Component {
+class ProviderRegistration extends React.Component {
 
     constructor(props) {
         super(props);
@@ -54,16 +54,15 @@ class Signup extends React.Component {
             password: this.state.new_user["password"],
             profiles: [
                 {
-                    id: 2
+                    id: 4
                 }
             ]
         }
 
-
         if (this.state.isPasswordValid) {
-            this.props.signup(new_user, (res) => {
+            this.props.providerSignup(new_user, (res) => {
                 if (res.data) {
-                    this.props.history.push('/login');
+                    this.props.history.push('/provider-login');
                 } else {
                     alert("something error please try again!")
                 }
@@ -85,8 +84,6 @@ class Signup extends React.Component {
         } else {
             this.setState({isPasswordValid: true});
         }
-
-        console.log(this.state.new_user);
     };
 
     render() {
@@ -96,7 +93,6 @@ class Signup extends React.Component {
         let checkSuccessful = this.state.isModelVisible && <Alert severity="error">Something error happens, please try again!</Alert>
         return (
             <div>
-                <Header />
                 <Container component="main" maxWidth="xs">
                     <CssBaseline />
                     <div className={classes.paper}>
@@ -104,7 +100,7 @@ class Signup extends React.Component {
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Sign up
+                            Provider Sign up
                         </Typography>
                         <form className={classes.form} onSubmit={this.handleSubmit.bind(this)} noValidate>
                             <Grid container spacing={2}>
@@ -164,10 +160,9 @@ class Signup extends React.Component {
                         </form>
                     </div>
                 </Container>
-                <Footer />
             </div>
 
         );
     }
 }
-export default withStyles(styles, { withTheme: true })(connect(null, {signup})(Signup));
+export default withStyles(styles, { withTheme: true })(connect(null, {providerSignup})(ProviderRegistration));

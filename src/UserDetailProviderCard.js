@@ -6,11 +6,10 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import {blue, red} from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import {withStyles} from "@material-ui/core";
 import {connect} from "react-redux";
 import {checkLogin} from "./actions/auth.action";
-import {getCurrentUserDetail, updateUserDetail} from "./actions/user_detail.action";
+import {deleteProviderFromHealthTeam, getCurrentUserDetail, updateUserDetail} from "./actions/user_detail.action";
 import CancelIcon from '@material-ui/icons/Cancel';
 
 const useStyles = (theme) => ({
@@ -33,6 +32,11 @@ class UserDetailProviderCard extends React.Component {
         if (!this.props.loggedIn) {
             this.props.checkLogin();
         }
+        this.props.getCurrentUserDetail(this.props.loggedIn.id)
+            .then(() => {
+                this.props.deleteProviderFromHealthTeam(this.props.userDetail.id, this.props.provider);
+            });
+        this.props.history.push("/account");
     }
 
     render() {
@@ -51,8 +55,8 @@ class UserDetailProviderCard extends React.Component {
                         </Avatar>
                     }
                     action={
-                        <IconButton aria-label="add to favorites">
-                            <CancelIcon onClick={this.handleClick.bind(this)}/>
+                        <IconButton aria-label="add to favorites" onClick={this.handleClick.bind(this)}>
+                            <CancelIcon color="secondary" />
                         </IconButton>
                     }
                     title={name}
@@ -78,5 +82,6 @@ function mapStateToProps(appState) {
 export default withStyles(useStyles)(connect(mapStateToProps, {
     checkLogin,
     getCurrentUserDetail,
-    updateUserDetail
+    updateUserDetail,
+    deleteProviderFromHealthTeam
 })(UserDetailProviderCard));

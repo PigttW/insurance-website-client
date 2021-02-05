@@ -5,7 +5,7 @@ export default function authReducer(oldState = null, action) {
     switch (action.type) {
         case LOGIN:
             res = action.payload.data;
-            if (res.success) {
+            if (res && res.success) {
                 return res.user;
             } else {
                 return null;
@@ -19,6 +19,7 @@ export default function authReducer(oldState = null, action) {
             }
         case LOGOUT:
             res = action.payload.data;
+            console.log(res);
             if (res.success) {
                 return null;
             } else {
