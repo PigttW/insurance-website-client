@@ -106,6 +106,7 @@ class AddPlan extends React.Component {
     handleVerifyClick(event) {
         console.log(this.state.newPlan);
         this.props.addInsurance(this.state.newPlan);
+        alert("successful");
     }
 
     render() {

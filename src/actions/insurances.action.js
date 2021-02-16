@@ -4,6 +4,8 @@ export const GET_INSURANCES = "GET_INSURANCES"
 export const SORT_INSURANCES = "SORT_INSURANCES"
 export const ADD_INSURANCE = "ADD_INSURANCE"
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 export function getInsurances() {
     const promise = axios.get('http://localhost:8080/insurance');
     return {

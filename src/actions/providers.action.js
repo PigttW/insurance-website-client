@@ -5,8 +5,10 @@ export const FILTER_PROVIDERS_BY_TYPE = 'FILTER_PROVIDERS_BY_TYPE';
 export const FILTER_PROVIDERS_BY_NAME = 'FILTER_PROVIDERS_BY_NAME';
 export const UPDATE_PROVIDER_DETAIL ='UPDATE_PROVIDER_DETAIL';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 export function getProviders() {
-    const promise = axios.get('http://localhost:8080/provider-detail');
+    const promise = axios.get(`http://localhost:8080/provider-detail`);
     return {
         type: GET_PROVIDERS,
         payload: promise

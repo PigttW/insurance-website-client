@@ -5,6 +5,9 @@ export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 export const CHECK_LOGIN = 'CHECK_LOGIN';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
+
 export function login(user, callback) {
     const promise = axios.post(`http://localhost:8080/login`, qs.stringify(user), {withCredentials: true})
         .then(res => {

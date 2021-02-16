@@ -3,6 +3,8 @@ import axios from "axios";
 export const CURRENT_PROVIDER_DETAIL = 'CURRENT_PROVIDER_DETAIL';
 export const UPDATE_CURRENT_PROVIDER_DETAIL = 'UPDATE_CURRENT_PROVIDER_DETAIL';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 export function getCurrentProviderDetail(id) {
     const promise = axios.get('http://localhost:8080/provider-detail/' + id);
     return {
